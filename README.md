@@ -13,9 +13,9 @@ Version: 0.1.0
 - Might teleport you outside the map boundaries if you're close to one.
 
 ## Authors
-See license.txt for license information.
+- paramat (MIT License)
+- Wuzzy (MIT License)
 
-paramat (MIT License)
-Wuzzy (MIT License)
+See license.txt for license information.
 
 This mod is based on the algorithm of the "spawn" mod from Minetest Game 5.0.0.
