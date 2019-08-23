@@ -1,0 +1,11 @@
+# textdomain: findbiome
+Find and teleport to biome=Ein Biom finden und hinteleportieren
+<biome>=<Biom>
+No player.=Kein Spieler
+Biome does not exist!=Biom existiert nicht!
+Biome found at @1.=Biom gefunden bei @1.
+No biome found! Sorry, finding biomes of the v6 mapgen is not supported!=Kein Biom gefunden. Tschuldigung, Biome des v6-Kartengenerators können nicht gefunden werden.
+No biome found!=Kein Biom gefunden!
+List all biomes=Alle Biome auflisten
+This command can't find biomes of the v6 mapgen!=Dieser Befehl kann Biome des v6-Kartengenerators nicht finden!
+No biomes.=Keine Biome.
