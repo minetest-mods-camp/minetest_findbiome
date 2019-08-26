@@ -8,7 +8,6 @@ and another command (“listbiomes”) to list biomes.
 Version: 0.1.0
 
 ## Known bugs and limitations
-- v6 mapgen is not supported.
 - Will only search for biomes in the same height as you.
 - Might teleport you outside the map boundaries if you're close to one.
 
