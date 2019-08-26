@@ -1,5 +1,6 @@
 local S = minetest.get_translator("findbiome")
 local mg_name = minetest.get_mapgen_setting("mg_name")
+local mod_biomeinfo = minetest.get_modpath("biomeinfo") ~= nil
 
 -- Parameters
 -------------
@@ -80,6 +81,9 @@ function find_biome(pos, biomes)
 		return false
 	end
 	local function search_v6()
+		if not mod_biomeinfo then return
+			false
+		end
 		for iter = 1, checks do
 			local found_biome = biomeinfo.get_v6_biome(pos)
 			for i = 1, #biomes do
@@ -134,6 +138,9 @@ minetest.register_on_mods_loaded(function()
 			local pos = player:get_pos()
 			local invalid_biome = true
 			if mg_name == "v6" then
+				if not mod_biomeinfo then
+					return false, S("Not supported. The “biomeinfo” mod is required for v6 mapgen support!")
+				end
 				local biomes = biomeinfo.get_active_v6_biomes()
 				for b=1, #biomes do
 					if param == biomes[b] then
@@ -168,6 +175,9 @@ minetest.register_on_mods_loaded(function()
 			local biomes
 			local b = 0
 			if mg_name == "v6" then
+				if not mod_biomeinfo then
+					return false, S("Not supported. The “biomeinfo” mod is required for v6 mapgen support!")
+				end
 				biomes = biomeinfo.get_active_v6_biomes()
 				b = #biomes
 			else
