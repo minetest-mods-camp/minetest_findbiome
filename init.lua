@@ -32,7 +32,7 @@ local function is_valid_pos(pos)
 	return math.abs(pos.x) > playable_limit or math.abs(pos.y) > playable_limit or math.abs(pos.z) > playable_limit
 end
 
-function find_biome(pos, biomes)
+local function find_biome(pos, biomes)
 	pos = vector.round(pos)
 	-- Pos: Starting point for biome checks. This also sets the y co-ordinate for all
 	-- points checked, so the suitable biomes must be active at this y.
@@ -99,9 +99,6 @@ function find_biome(pos, biomes)
 			local found_biome = biomeinfo.get_v6_biome(pos)
 			for i = 1, #biomes do
 				local searched_biome = biomes[i]
-				minetest.log("pos="..minetest.pos_to_string(pos))
-				minetest.log("biome_f="..tostring(found_biome))
-				minetest.log("biome_s="..tostring(searched_biome))
 				if found_biome == searched_biome then
 					local spawn_y = minetest.get_spawn_level(pos.x, pos.z)
 					if spawn_y then
