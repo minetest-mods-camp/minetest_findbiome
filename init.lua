@@ -1,6 +1,12 @@
 local S = minetest.get_translator("findbiome")
-local mg_name = minetest.get_mapgen_setting("mg_name")
+
 local mod_biomeinfo = minetest.get_modpath("biomeinfo") ~= nil
+local mg_name = minetest.get_mapgen_setting("mg_name")
+
+-- Calculate the maximum playable limit
+local mapgen_limit = tonumber(minetest.get_mapgen_setting("mapgen_limit"))
+local chunksize = tonumber(minetest.get_mapgen_setting("chunksize"))
+local playable_limit = math.max(mapgen_limit - (chunksize + 1) * 16, 0)
 
 -- Parameters
 -------------
@@ -21,6 +27,10 @@ local dirs = {
 	{x = 0, y = 0, z = -1},
 	{x = 1, y = 0, z = 0},
 }
+
+local function is_valid_pos(pos)
+	return math.abs(pos.x) > playable_limit or math.abs(pos.y) > playable_limit or math.abs(pos.z) > playable_limit
+end
 
 function find_biome(pos, biomes)
 	pos = vector.round(pos)
@@ -69,8 +79,9 @@ function find_biome(pos, biomes)
 					local spawn_y = minetest.get_spawn_level(pos.x, pos.z)
 					if spawn_y then
 						spawn_pos = {x = pos.x, y = spawn_y, z = pos.z}
-						-- FIXME: Don't return true when spawn_pos is out of map bounds
-						return true
+						if is_valid_pos(spawn_pos) then
+							return true
+						end
 					end
 				end
 			end
@@ -95,8 +106,9 @@ function find_biome(pos, biomes)
 					local spawn_y = minetest.get_spawn_level(pos.x, pos.z)
 					if spawn_y then
 						spawn_pos = {x = pos.x, y = spawn_y, z = pos.z}
-						-- FIXME: Don't return true when spawn_pos is out of map bounds
-						return true
+						if is_valid_pos(spawn_pos) then
+							return true
+						end
 					end
 				end
 			end

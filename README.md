@@ -9,7 +9,6 @@ Version: 0.2.0
 
 ## Known bugs and limitations
 - Will only search for biomes in the same height as you.
-- Might teleport you outside the map boundaries if you're close to one.
 
 ## Authors
 - paramat (MIT License)
