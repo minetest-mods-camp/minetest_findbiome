@@ -117,38 +117,37 @@ local function find_biome(pos, biomes)
 	local function search()
 		local attempt = 1
 		while attempt < 3 do
-		for iter = 1, checks do
-			local biome_data = minetest.get_biome_data(pos)
-			-- Sometimes biome_data is nil
-			local biome = biome_data and biome_data.biome
-			for id_ind = 1, #biome_ids do
-				local biome_id = biome_ids[id_ind]
-				pos = adjust_pos_to_biome_limits(pos, biome_id)
-				local spos = table.copy(pos)
-				if biome == biome_id then
-					local good_spawn_height = pos.y <= water_level + 16 and pos.y >= water_level
-					local spawn_y = minetest.get_spawn_level(spos.x, spos.z)
-					if spawn_y then
-						spawn_pos = {x = spos.x, y = spawn_y, z = spos.z}
-					elseif not good_spawn_height then
-						spawn_pos = {x = spos.x, y = spos.y, z = spos.z}
-					elseif attempt >= 2 then
-						spawn_pos = {x = spos.x, y = spos.y, z = spos.z}
-					end
-					if spawn_pos then
-						local adjusted_pos, outside = adjust_pos_to_biome_limits(spawn_pos, biome_id)
-						if is_in_world(spawn_pos) and not outside then
-							return true
+			for iter = 1, checks do
+				local biome_data = minetest.get_biome_data(pos)
+				-- Sometimes biome_data is nil
+				local biome = biome_data and biome_data.biome
+				for id_ind = 1, #biome_ids do
+					local biome_id = biome_ids[id_ind]
+					pos = adjust_pos_to_biome_limits(pos, biome_id)
+					local spos = table.copy(pos)
+					if biome == biome_id then
+						local good_spawn_height = pos.y <= water_level + 16 and pos.y >= water_level
+						local spawn_y = minetest.get_spawn_level(spos.x, spos.z)
+						if spawn_y then
+							spawn_pos = {x = spos.x, y = spawn_y, z = spos.z}
+						elseif not good_spawn_height then
+							spawn_pos = {x = spos.x, y = spos.y, z = spos.z}
+						elseif attempt >= 2 then
+							spawn_pos = {x = spos.x, y = spos.y, z = spos.z}
+						end
+						if spawn_pos then
+							local adjusted_pos, outside = adjust_pos_to_biome_limits(spawn_pos, biome_id)
+							if is_in_world(spawn_pos) and not outside then
+								return true
+							end
 						end
 					end
 				end
+
+				pos = next_pos()
 			end
-
-			pos = next_pos()
+			attempt = attempt + 1
 		end
-		attempt = attempt + 1
-		end
-
 		return false
 	end
 	local function search_v6()
