@@ -115,6 +115,8 @@ local function find_biome(pos, biomes)
 
 	-- Position search
 	local function search()
+		local attempt = 1
+		while attempt < 3 do
 		for iter = 1, checks do
 			local biome_data = minetest.get_biome_data(pos)
 			-- Sometimes biome_data is nil
@@ -130,6 +132,8 @@ local function find_biome(pos, biomes)
 						spawn_pos = {x = spos.x, y = spawn_y, z = spos.z}
 					elseif not good_spawn_height then
 						spawn_pos = {x = spos.x, y = spos.y, z = spos.z}
+					elseif attempt >= 2 then
+						spawn_pos = {x = spos.x, y = spos.y, z = spos.z}
 					end
 					if spawn_pos then
 						local adjusted_pos, outside = adjust_pos_to_biome_limits(spawn_pos, biome_id)
@@ -141,6 +145,8 @@ local function find_biome(pos, biomes)
 			end
 
 			pos = next_pos()
+		end
+		attempt = attempt + 1
 		end
 
 		return false
