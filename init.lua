@@ -28,8 +28,47 @@ local dirs = {
 	{x = 1, y = 0, z = 0},
 }
 
-local function is_valid_pos(pos)
+-- Returns true if pos is within the world boundaries
+local function is_in_world(pos)
 	return not (math.abs(pos.x) > playable_limit or math.abs(pos.y) > playable_limit or math.abs(pos.z) > playable_limit)
+end
+
+-- Checks if pos is within the biome's boundaries. If it isn't, places pos inside the boundaries.
+local function adjust_pos_to_biome_limits(pos, biome_id)
+	local bpos = table.copy(pos)
+	local biome_name = minetest.get_biome_name(biome_id)
+	local biome = minetest.registered_biomes[biome_name]
+	if not biome then
+		minetest.log("error", "[findbiome] adjust_pos_to_biome_limits non-existing biome!")
+		return bpos
+	end
+	local axes = {"y", "x", "z"}
+	local out_of_bounds = false
+	for a=1, #axes do
+		local ax = axes[a]
+		local min, max
+		if biome[ax.."_min"] then
+			min = biome[ax.."_min"]
+		else
+			min = -playable_limit
+		end
+		if biome[ax.."_max"] then
+			max = biome[ax.."_max"]
+		else
+			max = playable_limit
+		end
+		min = tonumber(min)
+		max = tonumber(max)
+		if bpos[ax] < min then
+			out_of_bounds = true
+			bpos[ax] = min
+		end
+		if bpos[ax] > max then
+			out_of_bounds = true
+			bpos[ax] = max
+		end
+	end
+	return bpos, out_of_bounds
 end
 
 local function find_biome(pos, biomes)
@@ -44,7 +83,7 @@ local function find_biome(pos, biomes)
 	local dir_step = 0
 	local dir_ind = 1
 	local success = false
-	local spawn_pos = {}
+	local spawn_pos
 	local biome_ids
 
 	-- Get next position on square search spiral
@@ -68,7 +107,6 @@ local function find_biome(pos, biomes)
 	end
 
 	-- Position search
-
 	local function search()
 		for iter = 1, checks do
 			local biome_data = minetest.get_biome_data(pos)
@@ -76,11 +114,12 @@ local function find_biome(pos, biomes)
 			local biome = biome_data and biome_data.biome
 			for id_ind = 1, #biome_ids do
 				local biome_id = biome_ids[id_ind]
+				local spos = table.copy(pos)
 				if biome == biome_id then
-					local spawn_y = minetest.get_spawn_level(pos.x, pos.z)
+					local spawn_y = minetest.get_spawn_level(spos.x, spos.z)
 					if spawn_y then
-						spawn_pos = {x = pos.x, y = spawn_y, z = pos.z}
-						if is_valid_pos(spawn_pos) then
+						spawn_pos = {x = spos.x, y = spawn_y, z = spos.z}
+						if is_in_world(spawn_pos) then
 							return true
 						end
 					end
@@ -104,7 +143,7 @@ local function find_biome(pos, biomes)
 					local spawn_y = minetest.get_spawn_level(pos.x, pos.z)
 					if spawn_y then
 						spawn_pos = {x = pos.x, y = spawn_y, z = pos.z}
-						if is_valid_pos(spawn_pos) then
+						if is_in_world(spawn_pos) then
 							return true
 						end
 					end
