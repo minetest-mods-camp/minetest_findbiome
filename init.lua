@@ -78,6 +78,36 @@ local function adjust_pos_to_biome_limits(pos, biome_id)
 	return bpos, out_of_bounds
 end
 
+-- Find the special default biome
+local function find_default_biome()
+	local all_biomes = minetest.registered_biomes
+	local biome_count = 0
+	for b, biome in pairs(all_biomes) do
+		biome_count = biome_count + 1
+	end
+	-- Trivial case: No biomes registered, default biome is everywhere.
+	if biome_count == 0 then
+		local y = minetest.get_spawn_level(0, 0)
+		if not y then
+			y = 0
+		end
+		return { x = 0, y = y, z = 0 }
+	end
+	local pos = {}
+	-- Just check a lot of random positions
+	-- It's a crappy algorithm but better than nothing.
+	for i=1, 100 do
+		pos.x = math.random(-playable_limit, playable_limit)
+		pos.y = math.random(-playable_limit, playable_limit)
+		pos.z = math.random(-playable_limit, playable_limit)
+		local biome_data = minetest.get_biome_data(pos)
+		if biome_data and minetest.get_biome_name(biome_data.biome) == "default" then
+			return pos
+		end
+	end
+	return nil
+end
+
 local function find_biome(pos, biomes)
 	pos = vector.round(pos)
 	-- Pos: Starting point for biome checks. This also sets the y co-ordinate for all
@@ -217,6 +247,15 @@ minetest.register_on_mods_loaded(function()
 					end
 				end
 			else
+				if param == "default" then
+					local biome_pos = find_default_biome()
+					if biome_pos then
+						player:set_pos(biome_pos)
+						return true, S("Biome found at @1.", minetest.pos_to_string(biome_pos))
+					else
+						return false, S("No biome found!")
+					end
+				end
 				local id = minetest.get_biome_id(param)
 				if id then
 					invalid_biome = false
