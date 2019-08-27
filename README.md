@@ -7,8 +7,8 @@ and another command (“listbiomes”) to list biomes.
 
 Version: 0.2.0
 
-## Known bugs and limitations
-- Will only search for biomes in the same height as you.
+## Known limitations
+- For exotic biomes restricted by height, this mod does not guarantee you will teleport to land
 
 ## Authors
 - paramat (MIT License)

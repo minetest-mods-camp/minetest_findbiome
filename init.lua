@@ -2,6 +2,7 @@ local S = minetest.get_translator("findbiome")
 
 local mod_biomeinfo = minetest.get_modpath("biomeinfo") ~= nil
 local mg_name = minetest.get_mapgen_setting("mg_name")
+local water_level = tonumber(minetest.get_mapgen_setting("water_level"))
 
 -- Calculate the maximum playable limit
 local mapgen_limit = tonumber(minetest.get_mapgen_setting("mapgen_limit"))
@@ -40,7 +41,7 @@ local function adjust_pos_to_biome_limits(pos, biome_id)
 	local biome = minetest.registered_biomes[biome_name]
 	if not biome then
 		minetest.log("error", "[findbiome] adjust_pos_to_biome_limits non-existing biome!")
-		return bpos
+		return bpos, true
 	end
 	local axes = {"y", "x", "z"}
 	local out_of_bounds = false
@@ -114,12 +115,19 @@ local function find_biome(pos, biomes)
 			local biome = biome_data and biome_data.biome
 			for id_ind = 1, #biome_ids do
 				local biome_id = biome_ids[id_ind]
+				pos = adjust_pos_to_biome_limits(pos, biome_id)
 				local spos = table.copy(pos)
 				if biome == biome_id then
+					local good_spawn_height = pos.y <= water_level + 16 and pos.y >= water_level
 					local spawn_y = minetest.get_spawn_level(spos.x, spos.z)
 					if spawn_y then
 						spawn_pos = {x = spos.x, y = spawn_y, z = spos.z}
-						if is_in_world(spawn_pos) then
+					elseif not good_spawn_height then
+						spawn_pos = {x = spos.x, y = spos.y, z = spos.z}
+					end
+					if spawn_pos then
+						local adjusted_pos, outside = adjust_pos_to_biome_limits(spawn_pos, biome_id)
+						if is_in_world(spawn_pos) and not outside then
 							return true
 						end
 					end
