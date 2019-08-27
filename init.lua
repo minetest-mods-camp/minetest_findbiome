@@ -63,10 +63,16 @@ local function adjust_pos_to_biome_limits(pos, biome_id)
 		if bpos[ax] < min then
 			out_of_bounds = true
 			bpos[ax] = min
+			if max-min > 16 then
+				bpos[ax] = math.max(bpos[ax] + 8, -playable_limit)
+			end
 		end
 		if bpos[ax] > max then
 			out_of_bounds = true
 			bpos[ax] = max
+			if max-min > 16 then
+				bpos[ax] = math.min(bpos[ax] - 8, playable_limit)
+			end
 		end
 	end
 	return bpos, out_of_bounds
