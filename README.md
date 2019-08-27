@@ -5,10 +5,14 @@ This is a mod to help with mod/game development for Minetest.
 It adds a command (“findbiome”) to find a biome nearby and teleport you to it
 and another command (“listbiomes”) to list biomes.
 
-Version: 0.2.0
+Version: 1.0.0
 
 ## Known limitations
-- For exotic biomes restricted by height, this mod does not guarantee you will teleport to land
+There's no guarantee you will always find the biome, even if it exists in the world.
+This can happen if the biome is very obscure or small, but usually you should be
+able to find the biome.
+
+If the biome could not be found, just move to somewhere else and try again.
 
 ## Authors
 - paramat (MIT License)
