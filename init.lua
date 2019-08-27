@@ -29,7 +29,7 @@ local dirs = {
 }
 
 local function is_valid_pos(pos)
-	return math.abs(pos.x) > playable_limit or math.abs(pos.y) > playable_limit or math.abs(pos.z) > playable_limit
+	return not (math.abs(pos.x) > playable_limit or math.abs(pos.y) > playable_limit or math.abs(pos.z) > playable_limit)
 end
 
 local function find_biome(pos, biomes)
@@ -45,6 +45,7 @@ local function find_biome(pos, biomes)
 	local dir_ind = 1
 	local success = false
 	local spawn_pos = {}
+	local biome_ids
 
 	-- Get next position on square search spiral
 	local function next_pos()
@@ -120,7 +121,7 @@ local function find_biome(pos, biomes)
 		success = search_v6()
 	else
 		-- Table of suitable biomes
-		local biome_ids = {}
+		biome_ids = {}
 		for i=1, #biomes do
 			local id = minetest.get_biome_id(biomes[i])
 			if not id then
