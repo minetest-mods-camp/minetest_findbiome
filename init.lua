@@ -223,12 +223,21 @@ local function find_biome(pos, biomes)
 
 end
 
+local mods_loaded = false
 minetest.register_on_mods_loaded(function()
+	mods_loaded = true
+end)
+
+-- Regiver chat commands
+do
 	minetest.register_chatcommand("findbiome", {
 		description = S("Find and teleport to biome"),
 		params = S("<biome>"),
 		privs = { debug = true, teleport = true },
 		func = function(name, param)
+			if not mods_loaded then
+				return false
+			end
 			local player = minetest.get_player_by_name(name)
 			if not player then
 				return false, S("No player.")
@@ -279,6 +288,9 @@ minetest.register_on_mods_loaded(function()
 		params = "",
 		privs = { debug = true },
 		func = function(name, param)
+			if not mods_loaded then
+				return false
+			end
 			local biomes
 			local b = 0
 			if mg_name == "v6" then
@@ -305,4 +317,4 @@ minetest.register_on_mods_loaded(function()
 			end
 		end,
 	})
-end)
+end
