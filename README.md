@@ -18,6 +18,6 @@ If the biome could not be found, just move to somewhere else and try again.
 - paramat (MIT License)
 - Wuzzy (MIT License)
 
-See license.txt for license information.
+This mod is free software. See `license.txt` for license information.
 
 This mod is based on the algorithm of the "spawn" mod from Minetest Game 5.0.0.
